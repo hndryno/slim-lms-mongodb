@@ -56,4 +56,9 @@ class LoanService
             $offset
         );
     }
+
+    public function findById(string $id): ?array
+    {
+        return $this->loanRepository->findById($id);
+    }
 }

@@ -104,4 +104,37 @@ class LoanController
             ]
         );
     }
+
+    public function detail(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $id = $args['id'];
+
+        if (!preg_match('/^[a-f\d]{24}$/i', $id)) {
+            return ResponseHelper::error(
+                $response,
+                HttpCode::BAD_REQUEST,
+                Message::INVALID_ID
+            );
+        }
+
+        $loan = $this->loanService->findById($id);
+
+        if ($loan === null) {
+            return ResponseHelper::error(
+                $response,
+                HttpCode::NOT_FOUND,
+                Message::LOAN_NOT_FOUND
+            );
+        }
+
+        return ResponseHelper::success(
+            $response,
+            HttpCode::OK,
+            Message::LOAN_RETRIEVED,
+            $loan
+        );
+    }
 }

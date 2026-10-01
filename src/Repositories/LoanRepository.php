@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
+use MongoDB\BSON\ObjectId;
 
 class LoanRepository
 {
@@ -125,5 +126,60 @@ class LoanRepository
         }
 
         return $loan;
+    }
+
+    public function findById(string $id): ?array
+    {
+        $pipeline = [
+            [
+                '$match' => [
+                    '_id' => new ObjectId($id),
+                ],
+            ],
+            [
+                '$lookup' => [
+                    'from' => 'customers',
+                    'localField' => 'customer_id',
+                    'foreignField' => '_id',
+                    'as' => 'customer',
+                ],
+            ],
+            [
+                '$unwind' => [
+                    'path' => '$customer',
+                    'preserveNullAndEmptyArrays' => true,
+                ],
+            ],
+            [
+                '$project' => [
+                    '_id' => 1,
+                    'customer_id' => 1,
+                    'principal_amount' => 1,
+                    'interest_rate' => 1,
+                    'tenor' => 1,
+                    'interest_amount' => 1,
+                    'total_amount' => 1,
+                    'paid_amount' => 1,
+                    'status' => 1,
+                    'start_date' => 1,
+                    'created_at' => 1,
+                    'updated_at' => 1,
+                    'customer.name' => 1,
+                    'customer.email' => 1,
+                ],
+            ],
+        ];
+
+        $cursor = $this->collection->aggregate($pipeline);
+
+        $loans = $cursor->toArray();
+
+        if (empty($loans)) {
+            return null;
+        }
+
+        return $this->formatLoan(
+            $loans[0]->getArrayCopy()
+        );
     }
 }
