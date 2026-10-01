@@ -3,17 +3,22 @@
 namespace App\Routes;
 
 use App\Controllers\CustomerController;
-use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 
 class CustomerRoutes
 {
     public static function register(
-        App $app,
+        RouteCollectorProxy $group,
         CustomerController $controller
     ): void {
-        $app->post(
-            '/api/v1/customers',
+        $group->post(
+            '/customers',
             [$controller, 'create']
+        );
+
+        $group->get(
+            '/customers',
+            [$controller, 'index']
         );
     }
 }

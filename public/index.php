@@ -60,9 +60,13 @@ $customerController = new CustomerController(
     $customerService
 );
 
-CustomerRoutes::register(
-    $app,
+$api = $app->group('/api/v1', function ($group) use (
     $customerController
-);
+) {
+    CustomerRoutes::register(
+        $group,
+        $customerController
+    );
+});
 
 $app->run();

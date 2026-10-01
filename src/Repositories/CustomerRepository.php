@@ -22,4 +22,47 @@ class CustomerRepository
             ...$data,
         ];
     }
+
+    public function findAll(int $limit, int $offset): array
+    {
+        $cursor = $this->collection->find(
+            [],
+            [
+                'limit' => $limit,
+                'skip' => $offset,
+                'sort' => [
+                    'created_at' => -1,
+                ],
+            ]
+        );
+
+        $customers = [];
+
+        foreach ($cursor as $customer) {
+            $customer = $customer->getArrayCopy();
+
+            $customer['id'] = (string) $customer['_id'];
+
+            unset($customer['_id']);
+
+            if ($customer['created_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                $customer['created_at'] = $customer['created_at']
+                    ->toDateTime()
+                    ->format('c');
+            }
+
+            if ($customer['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                $customer['updated_at'] = $customer['updated_at']
+                    ->toDateTime()
+                    ->format('c');
+            }
+
+            $customers[] = $customer;
+        }
+
+        return [
+            'data' => $customers,
+            'total' => $this->collection->countDocuments(),
+        ];
+    }
 }

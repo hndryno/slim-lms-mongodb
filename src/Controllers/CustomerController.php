@@ -36,4 +36,41 @@ class CustomerController
             ->withStatus(201)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    public function index(
+        Request $request,
+        Response $response
+    ): Response {
+        $queryParams = $request->getQueryParams();
+
+        $limit = isset($queryParams['limit'])
+            ? (int) $queryParams['limit']
+            : 10;
+
+        $offset = isset($queryParams['offset'])
+            ? (int) $queryParams['offset']
+            : 0;
+
+        $result = $this->customerService->findAll(
+            $limit,
+            $offset
+        );
+
+        $response->getBody()->write(
+            json_encode([
+                'success' => true,
+                'message' => 'Customers retrieved successfully',
+                'data' => $result['data'],
+                'pagination' => [
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'total' => $result['total'],
+                ],
+            ])
+        );
+
+        return $response
+            ->withStatus(200)
+            ->withHeader('Content-Type', 'application/json');
+    }
 }
