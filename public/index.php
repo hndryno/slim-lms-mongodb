@@ -1,6 +1,10 @@
 <?php
 
+use App\Controllers\CustomerController;
 use App\Database\MongoDBConnection;
+use App\Repositories\CustomerRepository;
+use App\Routes\CustomerRoutes;
+use App\Services\CustomerService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -37,5 +41,28 @@ $app->get('/health', function (
         'application/json'
     );
 });
+
+/*
+|--------------------------------------------------------------------------
+| Customer
+|--------------------------------------------------------------------------
+*/
+
+$customerRepository = new CustomerRepository(
+    $mongo->getDatabase()->selectCollection('customers')
+);
+
+$customerService = new CustomerService(
+    $customerRepository
+);
+
+$customerController = new CustomerController(
+    $customerService
+);
+
+CustomerRoutes::register(
+    $app,
+    $customerController
+);
 
 $app->run();
