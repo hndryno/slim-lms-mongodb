@@ -1,10 +1,14 @@
 <?php
 
 use App\Controllers\CustomerController;
+use App\Controllers\LoanController;
 use App\Database\MongoDBConnection;
 use App\Repositories\CustomerRepository;
+use App\Repositories\LoanRepository;
 use App\Routes\CustomerRoutes;
+use App\Routes\LoanRoutes;
 use App\Services\CustomerService;
+use App\Services\LoanService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -20,6 +24,12 @@ $mongo = new MongoDBConnection(
 );
 
 $app = AppFactory::create();
+
+/*
+|--------------------------------------------------------------------------
+| Health Check
+|--------------------------------------------------------------------------
+*/
 
 $app->get('/health', function (
     Request $request,
@@ -60,12 +70,43 @@ $customerController = new CustomerController(
     $customerService
 );
 
-$api = $app->group('/api/v1', function ($group) use (
-    $customerController
+/*
+|--------------------------------------------------------------------------
+| Loan
+|--------------------------------------------------------------------------
+*/
+
+$loanRepository = new LoanRepository(
+    $mongo->getDatabase()->selectCollection('loans')
+);
+
+$loanService = new LoanService(
+    $loanRepository,
+    $customerRepository
+);
+
+$loanController = new LoanController(
+    $loanService
+);
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
+$app->group('/api/v1', function ($group) use (
+    $customerController,
+    $loanController
 ) {
     CustomerRoutes::register(
         $group,
         $customerController
+    );
+
+    LoanRoutes::register(
+        $group,
+        $loanController
     );
 });
 
