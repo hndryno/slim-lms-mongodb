@@ -96,4 +96,25 @@ class CustomerRepository
 
         return $customer;
     }
+
+    public function update(string $id, array $data): ?array
+    {
+        $result = $this->collection->updateOne(
+            [
+                '_id' => new ObjectId($id),
+            ],
+            [
+                '$set' => [
+                    ...$data,
+                    'updated_at' => new \MongoDB\BSON\UTCDateTime(),
+                ],
+            ]
+        );
+
+        if ($result->getMatchedCount() === 0) {
+            return null;
+        }
+
+        return $this->findById($id);
+    }
 }

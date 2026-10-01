@@ -11,19 +11,9 @@ class CustomerRoutes
         RouteCollectorProxy $group,
         CustomerController $controller
     ): void {
-        $group->post(
-            '/customer',
-            [$controller, 'create']
-        );
-
-        $group->get(
-            '/customers',
-            [$controller, 'list']
-        );
-
-        $group->get(
-            '/customer/{id}', 
-            [$controller, 'detail']
-        );
+        $group->post('/customer', [$controller, 'create']);
+        $group->get('/customer/{id}', [$controller, 'detail']);
+        $group->get('/customers', [$controller, 'list']);
+        $group->put('/customer/{id}', [$controller, 'update']);
     }
 }

@@ -107,4 +107,40 @@ class CustomerController
             ->withStatus(200)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    public function update(Request $request, Response $response, array $args): Response {
+        $data = json_decode(
+            (string) $request->getBody(),
+            true
+        );
+
+        $customer = $this->customerService->update(
+            $args['id'],
+            $data
+        );
+
+        if ($customer === null) {
+            $response->getBody()->write(
+                json_encode([
+                    'success' => false,
+                    'message' => 'Customer not found',
+                    'data' => null,
+                ])
+            );
+
+            return $response
+                ->withStatus(404)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
+        $response->getBody()->write(
+            json_encode([
+                'success' => true,
+                'message' => 'Customer updated successfully',
+                'data' => $customer,
+            ])
+        );
+
+        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+    }
 }

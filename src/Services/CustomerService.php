@@ -35,4 +35,17 @@ class CustomerService
     {
         return $this->customerRepository->findById($id);
     }
+
+    public function update(string $id, array $data): ?array
+    {
+        return $this->customerRepository->update(
+            $id,
+            [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'address' => $data['address'],
+            ]
+        );
+    }
 }
