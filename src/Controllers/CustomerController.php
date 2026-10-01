@@ -3,8 +3,11 @@
 namespace App\Controllers;
 
 use App\Services\CustomerService;
+use App\Helpers\ResponseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Constants\HttpCode;
+use App\Constants\Message;
 
 class CustomerController
 {
@@ -24,17 +27,12 @@ class CustomerController
 
         $customer = $this->customerService->create($data);
 
-        $response->getBody()->write(
-            json_encode([
-                'success' => true,
-                'message' => 'Customer created successfully',
-                'data' => $customer,
-            ])
+        return ResponseHelper::success(
+            $response,
+            HttpCode::CREATED,
+            Message::CUSTOMER_CREATED,
+            $customer
         );
-
-        return $response
-            ->withStatus(201)
-            ->withHeader('Content-Type', 'application/json');
     }
 
     public function list(
@@ -56,22 +54,19 @@ class CustomerController
             $offset
         );
 
-        $response->getBody()->write(
-            json_encode([
-                'success' => true,
-                'message' => 'Customers retrieved successfully',
-                'data' => $result['data'],
+        return ResponseHelper::success(
+            $response,
+            HttpCode::OK,
+            Message::CUSTOMERS_RETRIEVED,
+            [
+                'items' => $result['data'],
                 'pagination' => [
                     'limit' => $limit,
                     'offset' => $offset,
                     'total' => $result['total'],
                 ],
-            ])
+            ]
         );
-
-        return $response
-            ->withStatus(200)
-            ->withHeader('Content-Type', 'application/json');
     }
 
     public function detail(
@@ -82,30 +77,19 @@ class CustomerController
         $customer = $this->customerService->findById($args['id']);
 
         if ($customer === null) {
-            $response->getBody()->write(
-                json_encode([
-                    'success' => false,
-                    'message' => 'Customer not found',
-                    'data' => null,
-                ])
+            return ResponseHelper::error(
+                $response,
+                HttpCode::NOT_FOUND,
+                Message::CUSTOMER_NOT_FOUND
             );
-
-            return $response
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'application/json');
         }
 
-        $response->getBody()->write(
-            json_encode([
-                'success' => true,
-                'message' => 'Customer retrieved successfully',
-                'data' => $customer,
-            ])
+        return ResponseHelper::success(
+            $response,
+            HttpCode::OK,
+            Message::CUSTOMER_RETRIEVED,
+            $customer
         );
-
-        return $response
-            ->withStatus(200)
-            ->withHeader('Content-Type', 'application/json');
     }
 
     public function update(Request $request, Response $response, array $args): Response {
@@ -120,17 +104,11 @@ class CustomerController
         );
 
         if ($customer === null) {
-            $response->getBody()->write(
-                json_encode([
-                    'success' => false,
-                    'message' => 'Customer not found',
-                    'data' => null,
-                ])
+            return ResponseHelper::error(
+                $response,
+                HttpCode::NOT_FOUND,
+                Message::CUSTOMER_NOT_FOUND
             );
-
-            return $response
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'application/json');
         }
 
         $response->getBody()->write(
@@ -152,29 +130,17 @@ class CustomerController
         $isDeleted = $this->customerService->delete($args['id']);
 
         if (!$isDeleted) {
-            $response->getBody()->write(
-                json_encode([
-                    'success' => false,
-                    'message' => 'Customer not found',
-                    'data' => null,
-                ])
+            return ResponseHelper::error(
+                $response,
+                HttpCode::NOT_FOUND,
+                Message::CUSTOMER_NOT_FOUND
             );
-
-            return $response
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'application/json');
         }
 
-        $response->getBody()->write(
-            json_encode([
-                'success' => true,
-                'message' => 'Customer deleted successfully',
-                'data' => null,
-            ])
+       return ResponseHelper::success(
+            $response,
+            HttpCode::OK,
+            Message::CUSTOMER_DELETED
         );
-
-        return $response
-            ->withStatus(200)
-            ->withHeader('Content-Type', 'application/json');
     }
 }
