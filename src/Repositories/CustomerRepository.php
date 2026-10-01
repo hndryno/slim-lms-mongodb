@@ -117,4 +117,13 @@ class CustomerRepository
 
         return $this->findById($id);
     }
+
+    public function delete(string $id): bool
+    {
+        $result = $this->collection->deleteOne([
+            '_id' => new ObjectId($id),
+        ]);
+
+        return $result->getDeletedCount() > 0;
+    }
 }

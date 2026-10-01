@@ -48,4 +48,9 @@ class CustomerService
             ]
         );
     }
+
+    public function delete(string $id): bool
+    {
+        return $this->customerRepository->delete($id);
+    }
 }

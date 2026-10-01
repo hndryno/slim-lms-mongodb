@@ -15,5 +15,6 @@ class CustomerRoutes
         $group->get('/customer/{id}', [$controller, 'detail']);
         $group->get('/customers', [$controller, 'list']);
         $group->put('/customer/{id}', [$controller, 'update']);
+        $group->delete('/customer/{id}', [$controller, 'delete']);
     }
 }

@@ -143,4 +143,38 @@ class CustomerController
 
         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
     }
+
+    public function delete(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $isDeleted = $this->customerService->delete($args['id']);
+
+        if (!$isDeleted) {
+            $response->getBody()->write(
+                json_encode([
+                    'success' => false,
+                    'message' => 'Customer not found',
+                    'data' => null,
+                ])
+            );
+
+            return $response
+                ->withStatus(404)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
+        $response->getBody()->write(
+            json_encode([
+                'success' => true,
+                'message' => 'Customer deleted successfully',
+                'data' => null,
+            ])
+        );
+
+        return $response
+            ->withStatus(200)
+            ->withHeader('Content-Type', 'application/json');
+    }
 }
