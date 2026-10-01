@@ -12,13 +12,18 @@ class CustomerRoutes
         CustomerController $controller
     ): void {
         $group->post(
-            '/customers',
+            '/customer',
             [$controller, 'create']
         );
 
         $group->get(
             '/customers',
-            [$controller, 'index']
+            [$controller, 'list']
+        );
+
+        $group->get(
+            '/customer/{id}', 
+            [$controller, 'detail']
         );
     }
 }

@@ -37,7 +37,7 @@ class CustomerController
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function index(
+    public function list(
         Request $request,
         Response $response
     ): Response {
@@ -66,6 +66,40 @@ class CustomerController
                     'offset' => $offset,
                     'total' => $result['total'],
                 ],
+            ])
+        );
+
+        return $response
+            ->withStatus(200)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function detail(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $customer = $this->customerService->findById($args['id']);
+
+        if ($customer === null) {
+            $response->getBody()->write(
+                json_encode([
+                    'success' => false,
+                    'message' => 'Customer not found',
+                    'data' => null,
+                ])
+            );
+
+            return $response
+                ->withStatus(404)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
+        $response->getBody()->write(
+            json_encode([
+                'success' => true,
+                'message' => 'Customer retrieved successfully',
+                'data' => $customer,
             ])
         );
 

@@ -30,4 +30,9 @@ class CustomerService
             $offset
         );
     }
+
+    public function findById(string $id): ?array
+    {
+        return $this->customerRepository->findById($id);
+    }
 }
