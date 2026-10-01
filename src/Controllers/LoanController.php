@@ -62,4 +62,46 @@ class LoanController
             $loan
         );
     }
+
+    public function list(
+        Request $request,
+        Response $response
+    ): Response {
+        $params = $request->getQueryParams();
+
+        $limit = isset($params['limit'])
+            ? (int) $params['limit']
+            : 10;
+
+        $offset = isset($params['offset'])
+            ? (int) $params['offset']
+            : 0;
+
+        if ($limit <= 0) {
+            $limit = 10;
+        }
+
+        if ($offset < 0) {
+            $offset = 0;
+        }
+
+        $result = $this->loanService->findAll(
+            $limit,
+            $offset
+        );
+
+        return ResponseHelper::success(
+            $response,
+            HttpCode::OK,
+            Message::LOANS_RETRIEVED,
+            [
+                'data' => $result['data'],
+                'pagination' => [
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'total' => $result['total'],
+                ],
+            ]
+        );
+    }
 }

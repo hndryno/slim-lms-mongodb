@@ -14,6 +14,9 @@ class Message
 
     // Loan
     public const LOAN_CREATED = 'Loan created successfully';
+    public const LOANS_RETRIEVED = 'Loans retrieved successfully';
+    public const LOAN_RETRIEVED = 'Loan retrieved successfully';
+    public const LOAN_NOT_FOUND = 'Loan not found';
 
     // General
     public const VALIDATION_ERROR = 'Validation error';

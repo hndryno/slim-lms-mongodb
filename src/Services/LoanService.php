@@ -46,4 +46,14 @@ class LoanService
             'updated_at' => new \MongoDB\BSON\UTCDateTime(),
         ]);
     }
+
+    public function findAll(
+        int $limit,
+        int $offset
+    ): array {
+        return $this->loanRepository->findAll(
+            $limit,
+            $offset
+        );
+    }
 }

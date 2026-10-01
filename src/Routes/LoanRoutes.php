@@ -12,5 +12,6 @@ class LoanRoutes
         LoanController $controller
     ): void {
         $group->post('/loan', [$controller, 'create']);
+        $group->get('/loans', [$controller, 'list']);
     }
 }
