@@ -18,6 +18,10 @@ class Message
     public const LOAN_RETRIEVED = 'Loan retrieved successfully';
     public const LOAN_NOT_FOUND = 'Loan not found';
 
+    // Repayment
+    public const REPAYMENT_CREATED = 'Repayment created successfully';
+    public const PAYMENT_EXCEEDS_REMAINING = 'Payment amount exceeds remaining loan amount';
+
     // General
     public const VALIDATION_ERROR = 'Validation error';
     public const INVALID_REQUEST = 'Invalid request';

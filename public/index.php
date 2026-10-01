@@ -1,14 +1,18 @@
 <?php
 
+use App\Database\MongoDBConnection;
 use App\Controllers\CustomerController;
 use App\Controllers\LoanController;
-use App\Database\MongoDBConnection;
+use App\Controllers\RepaymentController;
 use App\Repositories\CustomerRepository;
 use App\Repositories\LoanRepository;
+use App\Repositories\RepaymentRepository;
 use App\Routes\CustomerRoutes;
 use App\Routes\LoanRoutes;
+use App\Routes\RepaymentRoutes;
 use App\Services\CustomerService;
 use App\Services\LoanService;
+use App\Services\RepaymentService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -91,13 +95,33 @@ $loanController = new LoanController(
 
 /*
 |--------------------------------------------------------------------------
+| Repayments
+|--------------------------------------------------------------------------
+*/
+
+$repaymentRepository = new RepaymentRepository(
+    $mongo->getDatabase()->selectCollection('repayments')
+);
+
+$repaymentService = new RepaymentService(
+    $repaymentRepository,
+    $loanRepository
+);
+
+$repaymentController = new RepaymentController(
+    $repaymentService
+);
+
+/*
+|--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
 
 $app->group('/api/v1', function ($group) use (
     $customerController,
-    $loanController
+    $loanController,
+    $repaymentController
 ) {
     CustomerRoutes::register(
         $group,
@@ -107,6 +131,11 @@ $app->group('/api/v1', function ($group) use (
     LoanRoutes::register(
         $group,
         $loanController
+    );
+
+    RepaymentRoutes::register(
+        $group,
+        $repaymentController
     );
 });
 

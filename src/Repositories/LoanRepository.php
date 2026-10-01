@@ -182,4 +182,25 @@ class LoanRepository
             $loans[0]->getArrayCopy()
         );
     }
+
+    public function updatePayment(
+        string $loanId,
+        float $amount,
+        string $status
+    ): void {
+        $this->collection->updateOne(
+            [
+                '_id' => new ObjectId($loanId),
+            ],
+            [
+                '$inc' => [
+                    'paid_amount' => $amount,
+                ],
+                '$set' => [
+                    'status' => $status,
+                    'updated_at' => new UTCDateTime(),
+                ],
+            ]
+        );
+    }
 }
