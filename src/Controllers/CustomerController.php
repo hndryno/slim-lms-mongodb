@@ -54,17 +54,15 @@ class CustomerController
             $offset
         );
 
-        return ResponseHelper::success(
+        return ResponseHelper::successWithPagination(
             $response,
             HttpCode::OK,
             Message::CUSTOMERS_RETRIEVED,
+            $result['data'],
             [
-                'items' => $result['data'],
-                'pagination' => [
-                    'limit' => $limit,
-                    'offset' => $offset,
-                    'total' => $result['total'],
-                ],
+                'limit' => $limit,
+                'offset' => $offset,
+                'total' => $result['total'],
             ]
         );
     }
