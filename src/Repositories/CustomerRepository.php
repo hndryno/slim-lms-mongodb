@@ -18,10 +18,32 @@ class CustomerRepository
     {
         $result = $this->collection->insertOne($data);
 
-        return [
+        $customer = [
             'id' => (string) $result->getInsertedId(),
             ...$data,
         ];
+
+        return $this->formatCustomer($customer);
+    }
+
+    private function formatCustomer(array $customer): array
+    {
+        foreach ([
+            'created_at',
+            'updated_at',
+        ] as $field) {
+            if (
+                isset($customer[$field]) &&
+                $customer[$field] instanceof \MongoDB\BSON\UTCDateTime
+            ) {
+                $customer[$field] = $customer[$field]
+                    ->toDateTime()
+                    ->setTimezone(new \DateTimeZone('Asia/Jakarta'))
+                    ->format('Y-m-d\TH:i:sP');
+            }
+        }
+
+        return $customer;
     }
 
     public function findAll(int $limit, int $offset): array

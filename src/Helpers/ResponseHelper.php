@@ -26,6 +26,28 @@ class ResponseHelper
             ->withHeader('Content-Type', 'application/json');
     }
 
+    public static function successWithPagination(
+        ResponseInterface $response,
+        int $code,
+        string $message,
+        mixed $data,
+        array $pagination
+    ): ResponseInterface {
+        $response->getBody()->write(
+            json_encode([
+                'code' => $code,
+                'success' => true,
+                'message' => $message,
+                'data' => $data,
+                'pagination' => $pagination,
+            ])
+        );
+
+        return $response
+            ->withStatus($code)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
     public static function error(
         ResponseInterface $response,
         int $code,

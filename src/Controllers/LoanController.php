@@ -90,17 +90,15 @@ class LoanController
             $offset
         );
 
-        return ResponseHelper::success(
+        return ResponseHelper::successWithPagination(
             $response,
             HttpCode::OK,
             Message::LOANS_RETRIEVED,
+            $result['data'],
             [
-                'data' => $result['data'],
-                'pagination' => [
-                    'limit' => $limit,
-                    'offset' => $offset,
-                    'total' => $result['total'],
-                ],
+                'limit' => $limit,
+                'offset' => $offset,
+                'total' => $result['total'],
             ]
         );
     }
